@@ -1,4 +1,7 @@
 export const contractAddress = "0xfdb2512b4d5ad6c4d48a45f7815e65741c8798f3" as const;
+export const builderCode = "bc_3v0f5uva" as const;
+export const builderDataSuffix =
+  "0x62635f33763066357576610b0080218021802180218021802180218021" as const;
 
 export const baseTimerAbi = [
   {

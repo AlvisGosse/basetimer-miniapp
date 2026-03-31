@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAccount, useConnect, useDisconnect, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
-import { baseTimerAbi, contractAddress } from "@/lib/contract";
+import { encodeFunctionData } from "viem";
+import { useAccount, useConnect, useDisconnect, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
+import { baseTimerAbi, builderCode, builderDataSuffix, contractAddress } from "@/lib/contract";
 import { useFirstUse } from "@/hooks/use-first-use";
 import { NumberPanel } from "@/components/number-panel";
 import { StatusBadge } from "@/components/status-badge";
@@ -12,7 +13,7 @@ export function HeroStatusCard() {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const { connectors, connect, isPending: isConnecting } = useConnect();
-  const { data: hash, error: writeError, isPending: isWriting, writeContract } = useWriteContract();
+  const { data: hash, error: writeError, isPending: isWriting, sendTransaction } = useSendTransaction();
   const { isLoading: isConfirming, isSuccess: isConfirmed, error: receiptError } = useWaitForTransactionReceipt({
     hash,
   });
@@ -38,10 +39,14 @@ export function HeroStatusCard() {
   const resolvedError = writeError?.message ?? receiptError?.message ?? error ?? null;
 
   const onStart = () => {
-    writeContract({
-      address: contractAddress,
+    const calldata = encodeFunctionData({
       abi: baseTimerAbi,
       functionName: "start",
+    });
+
+    sendTransaction({
+      to: contractAddress,
+      data: `${calldata}${builderDataSuffix.slice(2)}`,
     });
   };
 
@@ -70,6 +75,8 @@ export function HeroStatusCard() {
           note={hasStarted ? "Unix seconds" : "Waiting for first start"}
         />
       </div>
+
+      <NumberPanel label="Builder" value={builderCode} note="ERC-8021 attribution active" />
 
       {!isConnected ? (
         <div className="wallet-list">

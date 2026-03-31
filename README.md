@@ -13,9 +13,15 @@ BaseTimer is a mobile-first Base Mini App that records a wallet's first usage ti
 ## Contract
 
 - Address: `0xfdb2512b4d5ad6c4d48a45f7815e65741c8798f3`
+- Builder code: `bc_3v0f5uva`
+- Builder data suffix: `0x62635f33763066357576610b0080218021802180218021802180218021`
 - ABI functions:
   - `firstUse(address) view returns (uint256)`
   - `start()`
+
+## Attribution
+
+`start()` transactions append the Base Builder Code ERC-8021 suffix so onchain activity can be attributed back to this app outside the Base App as well.
 
 ## Environment
 
